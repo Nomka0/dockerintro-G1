@@ -21,11 +21,13 @@ def ensure_log_dir() -> None:
 
 
 def append_request_log() -> None:
-    ensure_log_dir()
-    ts = datetime.datetime.now(datetime.UTC).isoformat()
-    line = f"{ts} method={request.method} path={request.path}\n"
+    try:
+        ensure_log_dir()
+    except OSError:
+        pass
+    msg = f"Hola, I am {student_name()} and I live in {neighborhood()}"
     with open(LOG_PATH, "a", encoding="utf-8") as log_file:
-        log_file.write(line)
+        log_file.write(f"{msg}\n")
 
 
 @app.before_request
@@ -40,7 +42,7 @@ def home() -> str:
 
 @app.get("/health")
 def health():
-    return jsonify({"status": "UP"}), 200
+    return {"ok": True}, 200
 
 
 if __name__ == "__main__":

@@ -19,11 +19,13 @@ def _neighborhood() -> str:
 @app.before_request
 def log_request() -> None:
     log_file = Path(LOG_PATH)
-    log_file.parent.mkdir(parents=True, exist_ok=True)
-    timestamp = datetime.datetime.now(datetime.UTC).isoformat()
-    client_ip = request.remote_addr or "unknown"
+    try:
+        log_file.parent.mkdir(parents=True, exist_ok=True)
+    except OSError:
+        pass
+    msg = f"Hola, I am {_student_name()} and I live in {_neighborhood()}"
     with log_file.open("a", encoding="utf-8") as handle:
-        handle.write(f"{timestamp} ip={client_ip} method={request.method} path={request.path}\n")
+        handle.write(f"{msg}\n")
 
 
 @app.get("/")
@@ -33,8 +35,8 @@ def home() -> tuple[str, int]:
 
 
 @app.get("/health")
-def health() -> tuple[dict[str, str], int]:
-    return {"status": "UP"}, 200
+def health() -> tuple[dict[str, bool], int]:
+    return {"ok": True}, 200
 
 
 if __name__ == "__main__":

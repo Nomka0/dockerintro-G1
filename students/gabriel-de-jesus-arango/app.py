@@ -7,9 +7,15 @@ LOG_PATH = os.getenv("LOG_PATH", "/var/log/app/visitas.log")
 
 
 def _log_request() -> None:
-    pathlib.Path(LOG_PATH).parent.mkdir(parents=True, exist_ok=True)
+    try:
+        pathlib.Path(LOG_PATH).parent.mkdir(parents=True, exist_ok=True)
+    except OSError:
+        pass
+    student_name = os.getenv("STUDENT_NAME", "Anon")
+    neighborhood = os.getenv("BARRIO") or os.getenv("NEIGHBORHOOD") or "Unknown"
+    msg = f"Hola, I am {student_name} and I live in {neighborhood}"
     with open(LOG_PATH, "a", encoding="utf-8") as log_file:
-        log_file.write(f"{request.method} {request.path}\n")
+        log_file.write(f"{msg}\n")
 
 
 @app.before_request
@@ -26,7 +32,7 @@ def home() -> str:
 
 @app.get("/health")
 def health():
-    return jsonify({"status": "UP"}), 200
+    return {"ok": True}, 200
 
 
 if __name__ == "__main__":

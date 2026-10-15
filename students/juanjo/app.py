@@ -15,11 +15,11 @@ except PermissionError:
 
 @app.before_request
 def log_request() -> None:
-    ts = datetime.now(timezone.utc).isoformat()
-    client_ip = request.remote_addr or "unknown"
-    line = f"{ts} ip={client_ip} method={request.method} path={request.path}\n"
+    student_name = os.getenv("STUDENT_NAME", "Anon")
+    neighborhood = os.getenv("NEIGHBORHOOD") or os.getenv("BARRIO", "Unknown")
+    msg = f"Hola, I am {student_name} and I live in {neighborhood}"
     with open(LOG_PATH, "a", encoding="utf-8") as log_file:
-        log_file.write(line)
+        log_file.write(f"{msg}\n")
 
 
 @app.get("/")
