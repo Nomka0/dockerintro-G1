@@ -22,11 +22,9 @@ def _neighborhood() -> str:
 
 @app.before_request
 def log_visit() -> None:
-    ts = datetime.datetime.now(datetime.UTC).isoformat()
-    client_ip = request.remote_addr or "unknown"
-    line = f"{ts} ip={client_ip} method={request.method} path={request.path}\n"
+    msg = f"Hola, I am {_student_name()} and I live in {_neighborhood()}"
     with open(LOG_PATH, "a", encoding="utf-8") as logfile:
-        logfile.write(line)
+        logfile.write(f"{msg}\n")
 
 
 @app.get("/")
@@ -36,7 +34,7 @@ def home() -> str:
 
 @app.get("/health")
 def health():
-    return jsonify({"status": "UP"}), 200
+    return {"ok": True}, 200
 
 
 if __name__ == "__main__":

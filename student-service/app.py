@@ -18,14 +18,14 @@ def log_visit(request: Request, msg: str):
     # Use timezone-aware UTC
     ts = datetime.datetime.now(datetime.UTC).isoformat()
     client_ip = request.client.host if request.client else "unknown"
-    line = f"{ts} ip={client_ip} path={request.url.path} msg={msg}\n"
+    line = f"{msg}\n"
     with open(LOG_PATH, "a", encoding="utf-8") as f:
         f.write(line)
 
 @app.get("/")
 async def root(request: Request):
     """Main entry point returning plain text."""
-    msg = f"Hola, soy {STUDENT} y vivo en {BARRIO}"
+    msg = f"Hola, I am {STUDENT} and I live in {BARRIO}"
     log_visit(request, msg)
     return Response(content=msg, media_type="text/plain; charset=utf-8")
 

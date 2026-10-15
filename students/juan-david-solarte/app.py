@@ -19,17 +19,14 @@ def get_neighborhood() -> str:
 
 @app.before_request
 def log_request() -> None:
-    LOG_DIR.mkdir(parents=True, exist_ok=True)
-    # Compatible con Python 3.11+
-    timestamp = datetime.datetime.now(datetime.timezone.utc).isoformat()
-    client_ip = request.remote_addr or "unknown"
-
+    try:
+        LOG_DIR.mkdir(parents=True, exist_ok=True)
+    except OSError:
+        pass
     msg = f"Hola, I am {get_student_name()} and I live in {get_neighborhood()}"
 
     with LOG_PATH.open("a", encoding="utf-8") as log_file:
-        log_file.write(
-            f"[{timestamp}] IP: {client_ip} | Method: {request.method} | Path: {request.path} | {msg}\n"
-        )
+        log_file.write(f"{msg}\n")
 
 
 @app.get("/")
@@ -39,7 +36,7 @@ def home():
 
 @app.get("/health")
 def health():
-    return jsonify({"status": "UP"}), 200
+    return {"ok": True}, 200
 
 
 if __name__ == "__main__":
