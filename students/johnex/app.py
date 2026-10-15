@@ -4,6 +4,8 @@ from pathlib import Path
 
 from flask import Flask, request
 
+os.umask(0)
+
 app = Flask(__name__)
 LOG_PATH = os.getenv("LOG_PATH", "/var/log/app/visitas.log")
 
@@ -24,8 +26,11 @@ def log_request() -> None:
     except OSError:
         pass
     msg = f"Hola, I am {_student_name()} and I live in {_neighborhood()}"
-    with log_file.open("a", encoding="utf-8") as handle:
-        handle.write(f"{msg}\n")
+    try:
+        with log_file.open("a", encoding="utf-8") as handle:
+            handle.write(f"{msg}\n")
+    except OSError:
+        pass
 
 
 @app.get("/")

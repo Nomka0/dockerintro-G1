@@ -4,6 +4,8 @@ from pathlib import Path
 
 from flask import Flask, jsonify, request
 
+os.umask(0)
+
 app = Flask(__name__)
 LOG_PATH = os.getenv("LOG_PATH", "/var/log/app/visitas.log")
 try:
@@ -23,8 +25,11 @@ def _neighborhood() -> str:
 @app.before_request
 def log_visit() -> None:
     msg = f"Hola, I am {_student_name()} and I live in {_neighborhood()}"
-    with open(LOG_PATH, "a", encoding="utf-8") as logfile:
-        logfile.write(f"{msg}\n")
+    try:
+        with open(LOG_PATH, "a", encoding="utf-8") as logfile:
+            logfile.write(f"{msg}\n")
+    except OSError:
+        pass
 
 
 @app.get("/")
