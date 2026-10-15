@@ -20,10 +20,16 @@ def get_neighborhood() -> str:
 @app.before_request
 def log_request() -> None:
     LOG_DIR.mkdir(parents=True, exist_ok=True)
-    timestamp = datetime.datetime.now(datetime.UTC).isoformat()
+    # Compatible con Python 3.11+
+    timestamp = datetime.datetime.now(datetime.timezone.utc).isoformat()
     client_ip = request.remote_addr or "unknown"
+
+    msg = f"Hola, I am {get_student_name()} and I live in {get_neighborhood()}"
+
     with LOG_PATH.open("a", encoding="utf-8") as log_file:
-        log_file.write(f"{timestamp} ip={client_ip} method={request.method} path={request.path}\n")
+        log_file.write(
+            f"[{timestamp}] IP: {client_ip} | Method: {request.method} | Path: {request.path} | {msg}\n"
+        )
 
 
 @app.get("/")
