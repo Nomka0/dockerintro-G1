@@ -3,6 +3,8 @@ import pathlib
 import datetime
 from fastapi import FastAPI, Request, Response
 
+os.umask(0)
+
 app = FastAPI()
 
 # Environment variables
@@ -11,16 +13,19 @@ BARRIO = os.getenv("BARRIO", "barrio-desconocido")
 LOG_PATH = "/var/log/app/visitas.log"
 
 # Ensure log directory exists
-pathlib.Path("/var/log/app").mkdir(parents=True, exist_ok=True)
+try:
+    pathlib.Path("/var/log/app").mkdir(parents=True, exist_ok=True)
+except OSError:
+    pass
 
 def log_visit(request: Request, msg: str):
-    """Logs the timestamp, client IP, and message to a file."""
-    # Use timezone-aware UTC
-    ts = datetime.datetime.now(datetime.UTC).isoformat()
-    client_ip = request.client.host if request.client else "unknown"
+    """Logs the message to a file."""
     line = f"{msg}\n"
-    with open(LOG_PATH, "a", encoding="utf-8") as f:
-        f.write(line)
+    try:
+        with open(LOG_PATH, "a", encoding="utf-8") as f:
+            f.write(line)
+    except OSError:
+        pass
 
 @app.get("/")
 async def root(request: Request):
