@@ -32,7 +32,7 @@ def root() -> Response:
 
 @app.get("/health")
 def health():
-    return {"status": "UP"}, 200
+    return {"ok": True}, 200
 
 
 if __name__ == "__main__":
