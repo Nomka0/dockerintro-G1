@@ -9,11 +9,11 @@ LOG_PATH = "/var/log/app/visitas.log"
 
 
 def student_name() -> str:
-    return os.getenv("STUDENT_NAME", "Anon")
+    return os.getenv("STUDENT_NAME", "Antonio Rodriguez Castelblanco")  # Default to "Antonio" if not set
 
 
 def neighborhood() -> str:
-    return os.getenv("BARRIO") or os.getenv("NEIGHBORHOOD", "Unknown")
+    return os.getenv("BARRIO") or os.getenv("NEIGHBORHOOD", "la Base")
 
 
 def ensure_log_dir() -> None:
@@ -45,3 +45,4 @@ def health():
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=8080)
+ 
